@@ -17,7 +17,6 @@ var err error
 
 type ShopItem struct {
 	gorm.Model
-	Id    string `json:"id,omitempty";gorm:"primary_key"`
 	Name  string `json:"name,omitempty"`
 	Price string `json:"price,omitempty"`
 }
@@ -39,7 +38,10 @@ func getItem(w http.ResponseWriter, req *http.Request) {
 }
 
 func createItem(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "get item")
+	var shopItem ShopItem
+	json.NewDecoder(req.Body).Decode(&shopItem)
+	db.Create(&shopItem)
+	json.NewEncoder(w).Encode(shopItem)
 }
 
 func handleRequests() {
