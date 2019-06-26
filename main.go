@@ -34,7 +34,18 @@ func getItems(w http.ResponseWriter, req *http.Request) {
 }
 
 func getItem(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "get item")
+	params := mux.Vars(req)
+
+	var shopItem ShopItem
+	err = db.First(&shopItem, params["id"]).Error
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(shopItem)
 }
 
 func createItem(w http.ResponseWriter, req *http.Request) {
